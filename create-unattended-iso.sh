@@ -151,10 +151,10 @@ fi
 
 # download netson seed file
 seed_file="netson.seed"
-if [[ ! -f $tmp/$seed_file ]]; then
-    echo -n " downloading $seed_file: "
-    download "https://raw.githubusercontent.com/netson/ubuntu-unattended/master/$seed_file"
-fi
+#if [[ ! -f $tmp/$seed_file ]]; then
+#    echo -n " downloading $seed_file: "
+#    download "https://raw.githubusercontent.com/netson/ubuntu-unattended/master/$seed_file"
+#fi
 
 # install required packages
 echo " installing required packages"
@@ -215,10 +215,14 @@ sed -i -r 's/timeout\s+[0-9]+/timeout 1/g' $tmp/iso_new/isolinux/isolinux.cfg
 # copy the netson seed file to the iso
 cp -rT $tmp/$seed_file $tmp/iso_new/preseed/$seed_file
 
+
+mkdir -p $tmp/iso_new/preseed/custom
+touch $tmp/iso_new/preseed/custom/hello.txt
+
 # include firstrun script
 echo "
 # setup firstrun script
-d-i preseed/late_command                                    string      $late_command" >> $tmp/iso_new/preseed/$seed_file
+d-i preseed/late_command string cp -r /custom /target/custom;  " >> $tmp/iso_new/preseed/$seed_file
 
 # generate the password hash
 pwhash=$(echo $password | mkpasswd -s -m sha-512)

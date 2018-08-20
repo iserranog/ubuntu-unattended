@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # file names & paths
+CURRENT_PATH=`pwd`  # destination folder to store the final iso file
 tmp="$HOME"  # destination folder to store the final iso file
 hostname="ubuntu"
 currentuser="$( whoami)"
@@ -151,10 +152,10 @@ fi
 
 # download netson seed file
 seed_file="netson.seed"
-#if [[ ! -f $tmp/$seed_file ]]; then
-#    echo -n " downloading $seed_file: "
-#    download "https://raw.githubusercontent.com/netson/ubuntu-unattended/master/$seed_file"
-#fi
+if [[ ! -f $tmp/$seed_file ]]; then
+    echo -n " downloading $seed_file: "
+    cp $CURRENT_PATH/netson.seed $tmp/$seed_file
+fi
 
 # install required packages
 echo " installing required packages"

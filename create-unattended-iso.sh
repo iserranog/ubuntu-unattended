@@ -223,7 +223,7 @@ touch $tmp/iso_new/preseed/custom/hello.txt
 # include firstrun script
 echo "
 # setup firstrun script
-d-i preseed/late_command string in-target touch mm.txt; cp $tmp/iso_new/preseed/custom/hello.txt .  " >> $tmp/iso_new/preseed/$seed_file
+d-i preseed/late_command string in-target chmod +x /install/install.sh; in-target sh /install/install.sh;
 
 # generate the password hash
 pwhash=$(echo $password | mkpasswd -s -m sha-512)

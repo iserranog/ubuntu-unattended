@@ -119,10 +119,7 @@ fi
 
 # download netson seed file
 seed_file="netson.seed"
-if [[ ! -f $tmp/$seed_file ]]; then
-    echo -n " downloading $seed_file: "
     cp $CURRENT_PATH/netson.seed $tmp/$seed_file
-fi
 
 # install required packages
 echo " installing required packages"

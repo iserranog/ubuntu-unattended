@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+username=horiba
+password=HoribaAdmin
+
 # file names & paths
 CURRENT_PATH=`pwd`  # destination folder to store the final iso file
 tmp="$HOME"  # destination folder to store the final iso file
@@ -80,35 +83,9 @@ bion=$(fgrep Bionic $tmphtml | head -1 | awk '{print $3}')
 
 
 # ask whether to include vmware tools or not
-while true; do
-    echo " which ubuntu edition would you like to remaster:"
-    echo
-    echo "  [1] Ubuntu $prec LTS Server amd64 - Precise Pangolin"
-    echo "  [2] Ubuntu $trus LTS Server amd64 - Trusty Tahr"
-    echo "  [3] Ubuntu $xenn LTS Server amd64 - Xenial Xerus"
-    echo "  [4] Ubuntu $bion LTS Server amd64 - Bionic Beaver"
-    echo
-    read -p " please enter your preference: [1|2|3|4]: " ubver
-    case $ubver in
-        [1]* )  download_file="ubuntu-$prec-server-amd64.iso"           # filename of the iso to be downloaded
-                download_location="http://releases.ubuntu.com/$prec/"     # location of the file to be downloaded
-                new_iso_name="ubuntu-$prec-server-amd64-unattended.iso" # filename of the new iso file to be created
-                break;;
-        [2]* )  download_file="ubuntu-$trus-server-amd64.iso"             # filename of the iso to be downloaded
-                download_location="http://releases.ubuntu.com/$trus/"     # location of the file to be downloaded
-                new_iso_name="ubuntu-$trus-server-amd64-unattended.iso"   # filename of the new iso file to be created
-                break;;
-        [3]* )  download_file="ubuntu-$xenn-server-amd64.iso"
-                download_location="http://releases.ubuntu.com/$xenn/"
-                new_iso_name="ubuntu-$xenn-server-amd64-unattended.iso"
-                break;;
-        [4]* )  download_file="ubuntu-$bion-server-amd64.iso"
-                download_location="http://cdimage.ubuntu.com/releases/$bion/release/"
-                new_iso_name="ubuntu-$bion-server-amd64-unattended.iso"
-                break;;
-        * ) echo " please answer [1], [2], [3] or [4]";;
-    esac
-done
+download_file="ubuntu-$bion-server-amd64.iso"
+download_location="http://cdimage.ubuntu.com/releases/$bion/release/"
+new_iso_name="ubuntu-$bion-server-amd64-unattended.iso"
 
 if [ -f /etc/timezone ]; then
   timezone=`cat /etc/timezone`
@@ -121,19 +98,8 @@ fi
 
 # ask the user questions about his/her preferences
 read -ep " please enter your preferred timezone: " -i "${timezone}" timezone
-read -ep " please enter your preferred username: " -i "netson" username
-read -sp " please enter your preferred password: " password
 printf "\n"
-read -sp " confirm your preferred password: " password2
-printf "\n"
-read -ep " Make ISO bootable via USB: " -i "yes" bootable
-
-# check if the passwords match to prevent headaches
-if [[ "$password" != "$password2" ]]; then
-    echo " your passwords do not match; please restart the script and try again"
-    echo
-    exit
-fi
+bootable=yes
 
 # download the ubunto iso. If it already exists, do not delete in the end.
 cd $tmp
@@ -208,9 +174,6 @@ sed -i -r 's/timeout\s+[0-9]+/timeout 1/g' $tmp/iso_new/isolinux/isolinux.cfg
 
 # set late command
 
-   late_command="chroot /target curl -L -o /home/$username/start.sh https://raw.githubusercontent.com/netson/ubuntu-unattended/master/start.sh ;\
-     chroot /target chmod +x /home/$username/start.sh ;"
-
 
 
 # copy the netson seed file to the iso
@@ -240,6 +203,7 @@ echo $tmp/iso_new/preseed/$seed_file
 cat "$tmp/iso_new/install/initrd.gz" | gzip -d > "/tmp/initrd"
 cur=`pwd`
 cd $tmp/iso_new/preseed/
+cp -r $CURRENT_PATH/custom .
 find "./custom" | fakeroot cpio -o -H newc -A -F "/tmp/initrd"
 cat "/tmp/initrd" | gzip -9c > "$tmp/iso_new/install/initrd.gz"
 cd $cur

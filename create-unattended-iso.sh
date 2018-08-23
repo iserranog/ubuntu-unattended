@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+
 username=horiba
 password=HoribaAdmin
 
+sudo apt-get install -y syslinux
 # file names & paths
 CURRENT_PATH=`pwd`  # destination folder to store the final iso file
 tmp="$HOME"  # destination folder to store the final iso file
@@ -96,9 +98,8 @@ else
   timezone=`find /usr/share/zoneinfo/ -type f -exec md5sum {} \; | grep "^$checksum" | sed "s/.*\/usr\/share\/zoneinfo\///" | head -n 1`
 fi
 
+timezone="Etc/UTC"
 # ask the user questions about his/her preferences
-read -ep " please enter your preferred timezone: " -i "${timezone}" timezone
-printf "\n"
 bootable=yes
 
 # download the ubunto iso. If it already exists, do not delete in the end.

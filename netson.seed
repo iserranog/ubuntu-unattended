@@ -1,87 +1,186 @@
-# regional setting
-d-i debian-installer/language                               string      en_US:en
-d-i debian-installer/country                                string      US
-d-i debian-installer/locale                                 string      en_US
-d-i debian-installer/splash                                 boolean     false
-d-i localechooser/supported-locales                         multiselect en_US.UTF-8
-d-i pkgsel/install-language-support                         boolean     true
-
-# keyboard selection
-d-i console-setup/ask_detect                                boolean     false
-d-i keyboard-configuration/modelcode                        string      pc105
-d-i keyboard-configuration/layoutcode                       string      us
-d-i keyboard-configuration/variantcode                      string      intl
-d-i keyboard-configuration/xkb-keymap                       select      us(intl)
-d-i debconf/language                                        string      en_US:en
-
-# network settings
-d-i netcfg/choose_interface                                 select      auto
-d-i netcfg/dhcp_timeout                                     string      5
 d-i netcfg/get_hostname                                     string      {{hostname}}
 d-i netcfg/get_domain                                       string      {{hostname}}
-
-# mirror settings
-d-i mirror/country                                          string      manual
-d-i mirror/http/hostname                                    string      archive.ubuntu.com
-d-i mirror/http/directory                                   string      /ubuntu
-d-i mirror/http/proxy                                       string
-
-# clock and timezone settings
 d-i time/zone                                               string      {{timezone}}
-d-i clock-setup/utc                                         boolean     false
-d-i clock-setup/ntp                                         boolean     true
-
-# user account setup
-d-i passwd/root-login                                       boolean     false
-d-i passwd/make-user                                        boolean     true
 d-i passwd/user-fullname                                    string      {{username}}
 d-i passwd/username                                         string      {{username}}
 d-i passwd/user-password-crypted                            password    {{pwhash}}
-d-i passwd/user-uid                                         string
-d-i user-setup/allow-password-weak                          boolean     false
-d-i passwd/user-default-groups                              string      adm cdrom dialout lpadmin plugdev sambashare
-d-i user-setup/encrypt-home                                 boolean     false
-
-# configure apt
-d-i apt-setup/restricted                                    boolean     true
-d-i apt-setup/universe                                      boolean     true
-d-i apt-setup/backports                                     boolean     true
-d-i apt-setup/services-select                               multiselect security
-d-i apt-setup/security_host                                 string      security.ubuntu.com
-d-i apt-setup/security_path                                 string      /ubuntu
-tasksel tasksel/first                                       multiselect Basic Ubuntu server
-d-i pkgsel/upgrade                                          select      safe-upgrade
-d-i pkgsel/update-policy                                    select      none
-d-i pkgsel/updatedb                                         boolean     true
-
-# disk partitioning
-d-i partman/confirm_write_new_label                         boolean     true
-d-i partman/choose_partition                                select      finish
-d-i partman/confirm_nooverwrite                             boolean     true
-d-i partman/confirm                                         boolean     true
-d-i partman-auto/purge_lvm_from_device                      boolean     true
-d-i partman-lvm/device_remove_lvm                           boolean     true
-d-i partman-lvm/confirm                                     boolean     true
-d-i partman-lvm/confirm_nooverwrite                         boolean     true
-d-i partman-auto-lvm/no_boot                                boolean     true
-d-i partman-md/device_remove_md                             boolean     true
-d-i partman-md/confirm                                      boolean     true
-d-i partman-md/confirm_nooverwrite                          boolean     true
-d-i partman-auto/method                                     string      lvm
-d-i partman-auto-lvm/guided_size                            string      max
-d-i partman-partitioning/confirm_write_new_label            boolean     true
-
-# grub boot loader
-d-i grub-installer/only_debian                              boolean     true
-d-i grub-installer/with_other_os                            boolean     true
-
-# finish installation
-d-i finish-install/reboot_in_progress                       note
-d-i finish-install/keep-consoles                            boolean     false
-d-i cdrom-detect/eject                                      boolean     true
-d-i debian-installer/exit/halt                              boolean     false
-d-i debian-installer/exit/poweroff                          boolean     false
+d-i netcfg/hostname string {{hostname}}
 
 
-d-i preseed/late_command string cp -r /custom /target/custom; in-target chmod +x /custom/install.sh; in-target sh /custom/install.sh;
+d-i cdrom-detect/eject boolean true
+d-i debian-installer/exit/poweroff boolean false
+mysql-server-5.1 mysql-server/root_password password AquaAdmin
+mysql-server-5.1 mysql-server/root_password_again password AquaAdmin
+mysql-server-5.5 mysql-server/root_password_again AquaAdmin  
+mysql-server-5.5 mysql-server/root_password AquaAdmin    
+phpmyadmin       phpmyadmin/reconfigure-webserver  text     apache2   
+phpmyadmin       phpmyadmin/dbconfig-install       boolean  true      
+phpmyadmin       phpmyadmin/app-password-confirm   password AquaAdmin
+phpmyadmin       phpmyadmin/mysql/admin-pass       password AquaAdmin
+phpmyadmin       phpmyadmin/password-confirm       password AquaAdmin
+phpmyadmin       phpmyadmin/setup-password         password AquaAdmin
+phpmyadmin       phpmyadmin/mysql/app-pass         password AquaAdmin
+
+# Once installation is complete, automatically power off.
+o d-i finish-install/reboot_in_progress note
+d-i debian-installer/exit/poweroff boolean false
+d-i ubiquity/summary note
+ubiquity ubiquity/reboot boolean true
+ubiquity ubiquity/poweroff boolean true
+
+# Automatically download and install stable updates?
+unattended-upgrades unattended-upgrades/enable_auto_updates boolean false
+
+
+
+####################################################################
+# Installation Sources
+####################################################################
+
+# Configure the sources.list
+d-i mirror/country string manual
+d-i mirror/http/hostname  string ""
+d-i mirror/http/directory string ""
+d-i apt-setup/use_mirror boolean false
+d-i apt-setup/mirror/error select Change mirror
+d-i apt-setup/multiverse boolean true
+d-i apt-setup/restricted boolean true
+d-i apt-setup/universe boolean true
+d-i apt-setup/partner boolean true
+
+d-i debian-installer/allow_unauthenticated boolean true
+
+
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+
+
+####################################################################
+# Networking
+####################################################################
+
+# Network Configuration
+d-i netcfg/choose_interface select auto
+d-i netcfg/disable_dhcp boolean true
+d-i netcfg/disable_autoconfig boolean true
+
+# Static network configuration.
+d-i netcfg/get_nameservers string 192.168.0.1
+d-i netcfg/get_ipaddress string 192.168.0.151
+d-i netcfg/get_netmask string 255.255.255.0
+d-i netcfg/get_gateway string 192.168.0.1
+d-i netcfg/confirm_static boolean true
+d-i netcfg/enable boolean true
+
+
+
+####################################################################
+# Disk Partitioning / Boot loader
+####################################################################
+
+### Disk Partitioning ###
+
+# Configure auto partitioner
+ubiquity partman-auto/init_automatically_partition select Guided - use entire disk
+ubiquity partman-auto/disk string /dev/sda
+ubiquity partman-auto/method string regular
+ubiquity partman-auto/choose_recipe select All files in one partition (recommended for new users)
+ubiquity partman/confirm_write_new_label boolean true
+ubiquity partman/choose_partition select Finish partitioning and write changes to disk
+ubiquity partman/confirm boolean  true
+
+
+####################################################################
+# Localizations / Timezone
+####################################################################
+
+
+
+### Keyboard selection ###
+d-i keyboard-configuration/layoutcode string us
+d-i keyboard-configuration/variantcode string
+
+### Locale ###
+d-i debian-installer/locale string en_US
+
+### Timezone ###
+d-i time/zone select Europe/Amsterdam
+d-i clock-setup/utc boolean true
+d-i clock-setup/ntp boolean false
+d-i console-setup/ask_detect boolean false
+d-i console-setup/layoutcode string us
+
+d-i localechooser/supported-locales multiselect nl_NL, nl_BE, fr_BE
+
+### OEM-Config
+d-i oem-config/enable boolean true
+d-i oem-config/remove boolean true
+d-i oem-config/remove_extras boolean false
+
+d-i pkgsel/install-language-support boolean true 
+d-i oem-config/install-language-support boolean true
+d-i ubiquity/only-show-installable-languages boolean true
+
+
+####################################################################
+# User Creation
+####################################################################
+
+# Root User
+d-i passwd/root-login boolean false
+
+# Mortal User
+d-i passwd/auto-login boolean true
+d-i user-setup/allow-password-weak boolean true
+d-i user-setup/encrypt-home boolean false
+
+####################################################################
+# Some extras
+####################################################################
+tasksel tasksel/first multiselect server
+#d-i pkgsel/include string build-essential  
+
+d-i mirror/country string enter information manually
+d-i mirror/http/hostname string 
+d-i mirror/http/directory string /ubuntu
+d-i grub-installer/grub_not_mature_on_this_platform boolean false
+d-i pkgsel/install-language-support boolean true
+d-i mirror/http/proxy string
+
+d-i grub-installer/with_other_os boolean true
+d-i grub-installer/only_debian boolean true
+
+
+
+d-i pkgsel/install-language-support boolean false
+# installing languages
+# Language pack selection
+d-i pkgsel/language-packs ALL
+pkgsel/ignore-incomplete-language-support boolean true
+
+# Whether to upgrade packages after debootstrap.
+# Allowed values: none, safe-upgrade, full-upgrade
+d-i pkgsel/upgrade select none
+
+# Policy for applying updates. May be "none" (no automatic updates),
+d-i pkgsel/update-policy select none
+
+# By default, the system's locate database will be updated after the
+# installer has finished installing most packages. This may take a while, so
+# if you don't want it, you can set this to "false" to turn it off.
+d-i pkgsel/updatedb boolean false
+
+# This command is run just before the install finishes, but when there is
+# still a usable /target directory. You can chroot to /target and use it
+# directly, or use the apt-install and in-target commands to easily install
+# packages and run commands in the target system.
+
+
+
+
+#d-i preseed/late_command string cp -r /custom /target/custom; cp -r /target/media/preseed ;  in-target chmod +x /custom/install.sh; in-target sh /custom/install.sh;
+d-i preseed/late_command string in-target mkdir /install ; cp -r /cdrom/preseed /target/install/. ;  in-target chmod +x /install/preseed/custom/install.sh; in-target sh /install/preseed/custom/install.sh;
 

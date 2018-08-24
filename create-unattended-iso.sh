@@ -4,7 +4,22 @@
 username=horiba
 password=HoribaAdmin
 
-sudo apt-get install -y syslinux
+
+
+
+#set -e
+cp custom/sources.list  /etc/apt/sources.list
+apt-get  update -y
+#apt-get upgrade -y
+
+list=`cat custom/packages.txt`
+#apt-get install -y $list
+
+
+
+
+
+
 # file names & paths
 CURRENT_PATH=`pwd`  # destination folder to store the final iso file
 tmp="$HOME"  # destination folder to store the final iso file
@@ -178,8 +193,8 @@ sed -i -r 's/timeout\s+[0-9]+/timeout 1/g' $tmp/iso_new/isolinux/isolinux.cfg
 cp -rT $tmp/$seed_file $tmp/iso_new/preseed/$seed_file
 
 
-mkdir -p $tmp/iso_new/preseed/custom
-touch $tmp/iso_new/preseed/custom/hello.txt
+mkdir -p $tmp/iso_new/preseed/apts
+cp -r /var/cache/apt $tmp/iso_new/preseed/apts/.
 
 # include firstrun script
 
@@ -203,6 +218,7 @@ cur=`pwd`
 cd $tmp/iso_new/preseed/
 cp -r $CURRENT_PATH/custom .
 find "./custom" | fakeroot cpio -o -H newc -A -F "/tmp/initrd"
+#find "/var/cache/apt" | fakeroot cpio -o -H newc -A -F "/tmp/initrd"
 cat "/tmp/initrd" | gzip -9c > "$tmp/iso_new/install/initrd.gz"
 cd $cur
 

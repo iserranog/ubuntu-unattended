@@ -182,5 +182,5 @@ d-i pkgsel/updatedb boolean false
 
 
 #d-i preseed/late_command string cp -r /custom /target/custom; cp -r /target/media/preseed ;  in-target chmod +x /custom/install.sh; in-target sh /custom/install.sh;
-d-i preseed/late_command string in-target mkdir /install ; cp -r /cdrom/preseed /target/install/. ;  in-target chmod +x /install/preseed/custom/install.sh; in-target sh /install/preseed/custom/install.sh;
+d-i preseed/late_command string in-target mkdir /install ; cp -r /cdrom/preseed /target/install/. ;  in-target chmod +x /install/preseed/custom/install.sh; in-target sh /install/preseed/custom/install.sh {{username}};
 

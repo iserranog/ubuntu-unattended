@@ -3,6 +3,7 @@
 
 username=horiba
 password=HoribaAdmin
+hostname="t6000"
 
 
 
@@ -23,7 +24,6 @@ list=`cat custom/packages.txt`
 # file names & paths
 CURRENT_PATH=`pwd`  # destination folder to store the final iso file
 tmp="$HOME"  # destination folder to store the final iso file
-hostname="ubuntu"
 currentuser="$( whoami)"
 
 # define spinner function for slow tasks

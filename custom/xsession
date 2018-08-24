@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+
+touch x11_started
+
+echo "HELLO"
+
+read -n1 -r -p "Press any key to continue..." key
+
+
